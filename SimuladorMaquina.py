@@ -22,7 +22,7 @@ def proceso(env, nombre, RAM, CPU, vel, tiempos):
      memoria =random.randint(1,10) #asignacion de memoria ram
      instrucciones = random.randint(1,10) #cant de instrucciones del proceso
      
-     print(f"{nombre} llega en {env.now}, necesita {memoria} RAM y {instrucciones} instrucciones")
+     print(f"{nombre:10} | llega en {env.now:6.2f}, necesita {memoria} RAM y {instrucciones} instrucciones")
      
      #Pedir memoria RAM
      yield RAM.get(memoria) #si hay memoria continua
@@ -93,8 +93,26 @@ tiempos = []
 env.process(generador(env, RAM, CPU, vel=3, tiempos=tiempos,
                       total_procesos=25, intervalo=10))
 
+#visual bonito
+print("="*60)
+print("INICIO DE SIMULACIÓN")
+print("="*60)
+
 env.run()
 
-print("Cantidad de tiempos:", len(tiempos))
-print("Contenido:", tiempos)
-print("Promedio:", sum(tiempos)/len(tiempos))
+#final bonito
+print("\n" + "="*60)
+print("RESUMEN")
+print("="*60)
+
+import statistics
+
+promedio = statistics.mean(tiempos)
+desviacion = statistics.stdev(tiempos)
+
+print("\nRESULTADOS FINALES")
+print("-"*40)
+print(f"Procesos simulados : {len(tiempos)}")
+print(f"Tiempo promedio    : {promedio:.2f}")
+print(f"Desviacion estandar: {desviacion:.2f}")
+print("-"*40)
