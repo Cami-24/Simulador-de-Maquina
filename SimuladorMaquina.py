@@ -81,38 +81,59 @@ def generador(env, RAM, CPU, vel, tiempos, total_procesos, intervalo):
         
 
 # Configuración de la simulación
-RANDOM_SEED = 42
-random.seed(RANDOM_SEED)
-
-env = simpy.Environment()
-RAM = simpy.Container(env, init=100, capacity=100)
-CPU = simpy.Resource(env, capacity=1)
-
-tiempos = []
-
-env.process(generador(env, RAM, CPU, vel=3, tiempos=tiempos,
-                      total_procesos=25, intervalo=10))
-
-#visual bonito
-print("="*60)
-print("INICIO DE SIMULACIÓN")
-print("="*60)
-
-env.run()
-
-#final bonito
-print("\n" + "="*60)
-print("RESUMEN")
-print("="*60)
-
+import simpy
+import random
 import statistics
 
-promedio = statistics.mean(tiempos)
-desviacion = statistics.stdev(tiempos)
+def correr_simulacion(total_procesos, intervalo,
+                      RAM=100,
+                      vel=3,
+                      CPU=1,
+                      seed=42):
 
-print("\nRESULTADOS FINALES")
-print("-"*40)
-print(f"Procesos simulados : {len(tiempos)}")
-print(f"Tiempo promedio    : {promedio:.2f}")
-print(f"Desviacion estandar: {desviacion:.2f}")
-print("-"*40)
+    # Semilla para reproducibilidad
+    random.seed(seed)
+
+    # Crear entorno
+    env = simpy.Environment()
+    RAM = simpy.Container(env, init=RAM, capacity=RAM)
+    CPU = simpy.Resource(env, capacity=CPU)
+
+    tiempos = []
+
+    # Lanzar generador
+    env.process(generador(env, RAM, CPU,
+                          vel=vel,
+                          tiempos=tiempos,
+                          total_procesos=total_procesos,
+                          intervalo=intervalo))
+
+    # Visual bonito - inicio
+    print("="*60)
+    print("INICIO DE SIMULACIÓN")
+    print("="*60)
+    print(f"Procesos: {total_procesos}")
+    print(f"Intervalo llegada: {intervalo}")
+    print(f"RAM: {RAM.capacity}")
+    print(f"CPUs: {CPU.capacity}")
+    print(f"Velocidad CPU: {vel} instrucciones/unidad")
+    print("="*60)
+
+    env.run()
+
+    # Visual bonito - final
+    print("\n" + "="*60)
+    print("RESUMEN")
+    print("="*60)
+
+    promedio = statistics.mean(tiempos)
+    desviacion = statistics.stdev(tiempos) if len(tiempos) > 1 else 0
+
+    print("\nRESULTADOS FINALES")
+    print("-"*40)
+    print(f"Procesos simulados : {len(tiempos)}")
+    print(f"Tiempo promedio    : {promedio:.2f}")
+    print(f"Desviacion estandar: {desviacion:.2f}")
+    print("-"*40)
+
+    return promedio, desviacion
