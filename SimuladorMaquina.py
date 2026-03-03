@@ -63,13 +63,13 @@ def proceso(env, nombre, RAM, CPU, vel, tiempos):
              #tambien vuelve ready
              pass
         
-         # ESTADO TERMINATED
-         yield RAM.put(memoria) #devuelve la memoria
+     # ESTADO TERMINATED
+     yield RAM.put(memoria) #devuelve la memoria
          
-         tiempo_total = env.now - tiempo_inicio
-         tiempos.append((nombre, tiempo_total))
+     tiempo_total = env.now - tiempo_inicio
+     tiempos.append(tiempo_total)
          
-         print(f"{nombre} terminó en {env.now}. Tiempo total: {tiempo_total}")
+     print(f"{nombre} termina en {env.now}. Tiempo total: {tiempo_total}")
 
 
 
@@ -95,4 +95,6 @@ env.process(generador(env, RAM, CPU, vel=3, tiempos=tiempos,
 
 env.run()
 
+print("Cantidad de tiempos:", len(tiempos))
+print("Contenido:", tiempos)
 print("Promedio:", sum(tiempos)/len(tiempos))
